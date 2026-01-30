@@ -20,53 +20,126 @@ It centralizes the visualization of active services, deliveries, and tasks throu
 
 ---
 
+▶️ Como Executar o Projeto | Running the Project
+
+## ▶️ Como Executar o Projeto | Running the Project
+
+### 🇧🇷 Português
+
+#### Pré-requisitos
+
+- Node.js (versão 18 ou superior recomendada)
+- npm ou yarn
+- MongoDB em execução (local ou remoto)
+
+#### Passos para execução
+
+1. Clone o repositório:
+
+   ```bash
+   git clone https://github.com/felipemrts72/service-operations-dashboard.git
+
+   ```
+
+2. Acesse a pasta do projeto:
+
+```
+
+cd service-operations-dashboard
+
+3.	Instale as dependências:
+
+npm install
+
+4.	Configure as variáveis de ambiente (.env), se necessário.
+5.	Inicie o projeto em modo desenvolvimento:
+
+npm run dev
+
+O frontend ficará disponível em:
+
+http://localhost:5173
+
+⸻
+
+### 🇺🇸 English
+
+#### Requirements
+• Node.js (version 18 or higher recommended)
+• npm or yarn
+• MongoDB running (local or remote)
+
+#### Steps to run
+1. Clone the repository:
+
+git clone https://github.com/felipemrts72/service-operations-dashboard.git
+
+2.	Navigate to the project folder:
+
+cd service-operations-dashboard
+
+3.	Install dependencies:
+
+npm install
+
+4.	Set up environment variables (.env) if required.
+5.	Start the project in development mode:
+
+npm run dev
+
+The frontend will be available at:
+
+http://localhost:5173
+
+---
+
 ## 🏭 Funcionalidades Principais | Key Features
 
 ### 🇧🇷 Português
 
 - **Dashboard Operacional**
-  - Exibição de serviços ativos organizados por áreas produtivas (ex: Torno, Plasma, Martelos, Fabricação).
-  - Interface pensada para uso em monitores e TVs.
+- Exibição de serviços ativos organizados por áreas produtivas (ex: Torno, Plasma, Martelos, Fabricação).
+- Interface pensada para uso em monitores e TVs.
 
 - **Rotação Automática por Área**
-  - Alternância automática entre áreas a cada 3 segundos.
-  - Seleção manual fixa uma área específica.
-  - Botão para retornar ao modo automático.
+- Alternância automática entre áreas a cada 3 segundos.
+- Seleção manual fixa uma área específica.
+- Botão para retornar ao modo automático.
 
 - **Gestão do Ciclo de Vida dos Serviços**
-  - Criação de serviços.
-  - Atualização e correção de informações.
-  - Exclusão de serviços.
-  - Finalização de serviços.
+- Criação de serviços.
+- Atualização e correção de informações.
+- Exclusão de serviços.
+- Finalização de serviços.
 
 - **Regras Baseadas no Ciclo Diário**
-  - Serviços finalizados permanecem visíveis até o fim do expediente.
-  - Após o encerramento do dia, serviços finalizados deixam de aparecer no dashboard.
-  - Os dados permanecem armazenados no banco para histórico e auditoria.
+- Serviços finalizados permanecem visíveis até o fim do expediente.
+- Após o encerramento do dia, serviços finalizados deixam de aparecer no dashboard.
+- Os dados permanecem armazenados no banco para histórico e auditoria.
 
 ---
 
 ### 🇺🇸 English
 
 - **Operational Dashboard**
-  - Displays active services grouped by production areas (e.g. Lathe, Plasma, Hammers, Manufacturing).
-  - Designed for large screens such as monitors and TVs.
+- Displays active services grouped by production areas (e.g. Lathe, Plasma, Hammers, Manufacturing).
+- Designed for large screens such as monitors and TVs.
 
 - **Automatic Area Rotation**
-  - Automatically switches between areas every 3 seconds.
-  - Manual selection locks the view to a specific area.
-  - One-click option to return to automatic mode.
+- Automatically switches between areas every 3 seconds.
+- Manual selection locks the view to a specific area.
+- One-click option to return to automatic mode.
 
 - **Service Lifecycle Management**
-  - Create services.
-  - Update and correct service data.
-  - Delete services.
-  - Mark services as finished.
+- Create services.
+- Update and correct service data.
+- Delete services.
+- Mark services as finished.
 
 - **Daily Business Cycle Rules**
-  - Finished services remain visible until the end of the workday.
-  - After business hours, finished services are hidden from the dashboard.
-  - All data is persisted for historical records and auditing.
+- Finished services remain visible until the end of the workday.
+- After business hours, finished services are hidden from the dashboard.
+- All data is persisted for historical records and auditing.
 
 ---
 
@@ -76,16 +149,16 @@ It centralizes the visualization of active services, deliveries, and tasks throu
 
 - Serviços são exibidos apenas durante o período ativo de trabalho.
 - Serviços finalizados:
-  - Permanecem visíveis até o fim do expediente.
-  - São ocultados automaticamente no próximo dia útil.
+- Permanecem visíveis até o fim do expediente.
+- São ocultados automaticamente no próximo dia útil.
 - Suporte a turnos divididos (ex: manhã e tarde).
 
 ### 🇺🇸 English
 
 - Services are displayed only during active business hours.
 - Finished services:
-  - Remain visible until the end of the shift.
-  - Are automatically hidden on the next working day.
+- Remain visible until the end of the shift.
+- Are automatically hidden on the next working day.
 - Supports split shifts (e.g. morning and afternoon schedules).
 
 ---
@@ -153,3 +226,4 @@ This project was developed as a **real-world operational dashboard**, and also s
 ## 📄 Licença | License
 
 MIT License
+```
