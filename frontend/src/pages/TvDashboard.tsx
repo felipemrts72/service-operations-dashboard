@@ -28,12 +28,9 @@ export default function TvDashboard() {
   /* ⏰ Regra de horário */
   const hideFinalized = isAfterCutTime();
 
-  const timeFilteredServices = services.filter(service => {
-    if (hideFinalized && service.status === "Finalizado") {
-      return false;
-    }
-    return true;
-  });
+  const timeFilteredServices = services
+    .filter(service => !(hideFinalized && service.status === "Finalizado"))
+    .sort((a, b) => a.diasRestantes - b.diasRestantes); // MENOR prazo primeiro
 
   /* 🔁 Modo automático: troca de setor a cada 30s */
   useEffect(() => {
@@ -46,14 +43,22 @@ export default function TvDashboard() {
     return () => clearInterval(interval);
   }, [mode]);
 
+  /* 🔄 Atualiza lista de serviços a cada 10s */
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Força atualização do componente
+      setCurrentSectorIndex(prev => prev); // dispara re-render
+    }, 10000); // 10 segundos
+
+    return () => clearInterval(interval);
+  }, []);
+
   const sectorToShow =
     mode === "auto" ? sectors[currentSectorIndex] : null;
 
   const filteredServices =
     mode === "auto"
-      ? timeFilteredServices.filter(
-          service => service.sector === sectorToShow
-        )
+      ? timeFilteredServices.filter(service => service.sector === sectorToShow)
       : timeFilteredServices.filter(service =>
           selectedSectors.includes(service.sector)
         );
@@ -128,7 +133,7 @@ export default function TvDashboard() {
               boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
             }}
           >
-            ▶ Voltar ao modo automático
+            ▶️ Voltar ao modo automático
           </button>
         )}
       </div>
