@@ -1,17 +1,26 @@
-interface Props {
-  value: number;
+interface ProgressBarProps {
+  value: number; // 0 a 100
+  color?: string; // cor dinâmica
 }
 
-export default function ProgressBar({ value }: Props) {
+export default function ProgressBar({ value, color = "#2ecc71" }: ProgressBarProps) {
   return (
-    <div style={{ background: "#ddd", borderRadius: 8, height: 12 }}>
+    <div
+      style={{
+        width: "100%",
+        height: 10,
+        borderRadius: 6,
+        background: "#e5e7eb",
+        overflow: "hidden",
+        marginTop: 8
+      }}
+    >
       <div
         style={{
           width: `${value}%`,
           height: "100%",
-          background: value >= 100 ? "#2ecc71" : "#3498db",
-          borderRadius: 8,
-          transition: "width 0.3s"
+          background: color,
+          transition: "width 0.5s ease"
         }}
       />
     </div>
