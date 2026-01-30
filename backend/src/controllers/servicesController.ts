@@ -9,6 +9,8 @@ export async function getServices(req: Request, res: Response) {
 
 // Adicionar
 export async function addService(req: Request, res: Response) {
+console.log("req.body: ", req.body)
+
   const newService = new Service(req.body);
   await newService.save();
   res.json(newService);

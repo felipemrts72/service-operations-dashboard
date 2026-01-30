@@ -8,7 +8,6 @@ interface Props {
 
 export default function ServiceCard({ service }: Props) {
   const atrasado = service.diasRestantes < 0;
-  console.log(service.titulo)
   return (
     <div
 style={{

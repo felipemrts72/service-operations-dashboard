@@ -4,7 +4,9 @@ const BASE_URL = "http://localhost:5000/api/services";
 
 export async function getServices(): Promise<Service[]> {
   const res = await fetch(BASE_URL);
-  return res.json();
+  const json = await res.json();
+  console.log("JSON PURO DA API", json)
+  return json
 }
 
 export async function addService(service: Service): Promise<Service> {
