@@ -18,7 +18,7 @@ export async function addService(service: Service): Promise<Service> {
 }
 
 export async function updateService(
-  id: string,
+  id: number,
   data: Partial<Service>,
 ): Promise<Service> {
   const res = await fetch(`${BASE_URL}/${id}`, {
@@ -29,12 +29,12 @@ export async function updateService(
   return res.json();
 }
 
-export async function finalizeService(id: string): Promise<Service> {
+export async function finalizeService(id: number): Promise<Service> {
   const res = await fetch(`${BASE_URL}/finalize/${id}`, { method: 'PUT' });
   return res.json();
 }
 
-export async function deleteService(id: string): Promise<{ message: string }> {
+export async function deleteService(id: number): Promise<{ message: string }> {
   const res = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE' });
   return res.json();
 }
