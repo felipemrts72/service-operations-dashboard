@@ -1,7 +1,6 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import type { Service } from "../types/Service";
-import * as api from "../api"; // Arquivo que centraliza chamadas à API
-
+import { createContext, useContext, useState, useEffect } from 'react';
+import type { Service } from '../types/Service';
+import * as api from '../api'; // Arquivo que centraliza chamadas à API
 
 interface ServicesContextType {
   services: Service[];
@@ -21,8 +20,6 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
     async function loadServices() {
       const data = await api.getServices();
 
-      console.log("DADOS DO BACKEND: ", data)
-
       setServices(data);
     }
     loadServices();
@@ -30,38 +27,38 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
 
   async function addService(service: Service) {
     const newService = await api.addService(service);
-    setServices(prev => [...prev, newService]);
+    setServices((prev) => [...prev, newService]);
   }
 
   async function updateServiceProgress(id: string, newProgress: number) {
     const updated = await api.updateService(id, { progresso: newProgress });
-    setServices(prev =>
-      prev.map(s => (s.id === Number(id) ? updated : s))
-    );
+    setServices((prev) => prev.map((s) => (s.id === Number(id) ? updated : s)));
   }
 
   async function finalizeService(id: string) {
-  try {
-    const updated = await api.finalizeService(id);
-    if (!updated) {
-      alert("Erro: serviço não encontrado");
-      return;
+    try {
+      const updated = await api.finalizeService(id);
+      if (!updated) {
+        alert('Erro: serviço não encontrado');
+        return;
+      }
+      setServices((prev) =>
+        prev.map((s) => (s.id === Number(id) ? updated : s)),
+      );
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao finalizar serviço');
     }
-    setServices(prev => prev.map(s => (s.id === Number(id) ? updated : s)));
-  } catch (err) {
-    console.error(err);
-    alert("Erro ao finalizar serviço");
   }
-}
 
   async function deleteService(id: string) {
     const confirmDelete = window.confirm(
-      "Tem certeza que deseja apagar este serviço?"
+      'Tem certeza que deseja apagar este serviço?',
     );
     if (!confirmDelete) return;
 
     await api.deleteService(id);
-    setServices(prev => prev.filter(s => s.id !== Number(id)));
+    setServices((prev) => prev.filter((s) => s.id !== Number(id)));
   }
 
   return (
@@ -71,7 +68,7 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
         addService,
         updateServiceProgress,
         finalizeService,
-        deleteService
+        deleteService,
       }}
     >
       {children}
@@ -81,6 +78,7 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
 
 export function useServices() {
   const context = useContext(ServicesContext);
-  if (!context) throw new Error("useServices must be used within ServicesProvider");
+  if (!context)
+    throw new Error('useServices must be used within ServicesProvider');
   return context;
 }

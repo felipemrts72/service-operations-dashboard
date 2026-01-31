@@ -1,40 +1,46 @@
-import ProgressBar from "./ProgressBar";
-import type { Service } from "../types/Service";
+import ProgressBar from './ProgressBar';
+import type { Service } from '../types/Service';
 
 interface Props {
   service: Service;
 }
 
 export default function ServiceCard({ service }: Props) {
-  const atrasado = service.diasRestantes < 0;
+  // Datas em timestamp
+  const prazo = new Date(service.diasRestantes).getTime();
+  const hoje = Date.now();
 
-  // Calcula porcentagem do tempo decorrido para colorir a barra
-  const tempoTotal = service.diasRestantes + (atrasado ? 0 : 0); // assume diasRestantes = dias faltando
-  let color = "#2ecc71"; // verde por padrão
+  // Atraso real
+  const atrasado = hoje > prazo;
 
-  if (!atrasado) {
-    // Se passou mais de 50% do prazo, fica laranja
-    const percDecorrido = 1 - service.diasRestantes / (service.diasRestantes + service.progresso);
-    if (percDecorrido >= 0.5) color = "#f59e0b"; // laranja
-  } else {
-    color = "#e74c3c"; // vermelho se atrasado
+  // Diferença em dias
+  const diffMs = prazo - hoje;
+  const diasRestantes = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+  // Cor da barra
+  let color = '#2ecc71'; // verde
+
+  if (atrasado) {
+    color = '#e74c3c'; // vermelho
+  } else if (service.progresso >= 50) {
+    color = '#f59e0b'; // laranja
   }
 
   return (
     <div
       style={{
-        background: "#ffffff",
+        background: '#ffffff',
         padding: 16,
         borderRadius: 16,
-        borderLeft: `6px solid ${atrasado ? "#e74c3c" : "#2ecc71"}`,
-        boxShadow: "0 6px 12px rgba(0,0,0,0.12)",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        transition: "all 0.3s ease",
-        position: "relative",
-        overflow: "hidden"
+        borderLeft: `6px solid ${atrasado ? '#e74c3c' : '#2ecc71'}`,
+        boxShadow: '0 6px 12px rgba(0,0,0,0.12)',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        transition: 'all 0.3s ease',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
       <div style={{ marginBottom: 12 }}>
@@ -42,19 +48,22 @@ export default function ServiceCard({ service }: Props) {
           style={{
             fontSize: 20,
             fontWeight: 700,
-            color: "#111827",
-            marginBottom: 4
+            color: '#111827',
+            marginBottom: 4,
           }}
         >
           #{service.id} - {service.titulo}
         </h2>
-        <p style={{ fontSize: 14, color: "#374151" }}>
+
+        <p style={{ fontSize: 14, color: '#374151' }}>
           <strong>Cliente:</strong> {service.cliente}
         </p>
-        <p style={{ fontSize: 14, color: "#374151" }}>
+
+        <p style={{ fontSize: 14, color: '#374151' }}>
           <strong>Responsável:</strong> {service.responsavel}
         </p>
-        <p style={{ fontSize: 14, color: "#374151" }}>
+
+        <p style={{ fontSize: 14, color: '#374151' }}>
           <strong>Status:</strong> {service.status}
         </p>
       </div>
@@ -66,12 +75,12 @@ export default function ServiceCard({ service }: Props) {
           marginTop: 8,
           fontSize: 14,
           fontWeight: 500,
-          color: atrasado ? "#e74c3c" : "#111827"
+          color: atrasado ? '#e74c3c' : '#111827',
         }}
       >
         {atrasado
-          ? `Atrasado ${Math.abs(service.diasRestantes)} dias`
-          : `Entrega em ${service.diasRestantes} dias`}
+          ? `Atrasado ${Math.abs(diasRestantes)} dias`
+          : `Entrega em ${diasRestantes} dias`}
       </p>
     </div>
   );

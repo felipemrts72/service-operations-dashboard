@@ -1,4 +1,4 @@
-import type { Sector } from "./Sector";
+import type { Sector } from './Sector';
 
 export type Service = {
   id: number;
@@ -6,7 +6,7 @@ export type Service = {
   cliente: string;
   responsavel: string;
   sector: Sector; // sempre um dos setores válidos
-  diasRestantes: number;
+  diasRestantes: string;
   progresso: number; // 0 a 100
-  status: "Iniciado" | "Em andamento" | "Finalização" | "Finalizado";
+  status: 'Iniciado' | 'Em andamento' | 'Finalização' | 'Finalizado';
 };

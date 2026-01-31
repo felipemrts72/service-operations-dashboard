@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const ServiceSchema = new mongoose.Schema(
   {
@@ -7,39 +7,39 @@ const ServiceSchema = new mongoose.Schema(
       required: true,
       unique: true,
       min: 0,
-      max: 999999
+      max: 999999,
     },
     titulo: {
       type: String,
-      required: true
+      required: true,
     },
     cliente: {
       type: String,
-      required: true
+      required: true,
     },
     responsavel: {
       type: String,
-      required: true
+      required: true,
     },
     sector: {
       type: String,
-      required: true
+      required: true,
     },
     diasRestantes: {
-      type: Number,
-      required: true
+      type: String,
+      required: true,
     },
     progresso: {
       type: Number,
-      default: 0
+      default: 0,
     },
     status: {
       type: String,
-      enum: ["Iniciado", "Em andamento", "Finalização", "Finalizado"],
-      default: "Iniciado"
-    }
+      enum: ['Iniciado', 'Em andamento', 'Finalização', 'Finalizado'],
+      default: 'Iniciado',
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export const Service = mongoose.model("Service", ServiceSchema);
+export const Service = mongoose.model('Service', ServiceSchema);
