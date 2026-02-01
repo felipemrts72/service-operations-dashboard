@@ -29,59 +29,52 @@ export default function ServiceCard({ service }: Props) {
   return (
     <div
       style={{
-        background: '#ffffff',
-        padding: 16,
-        borderRadius: 16,
-        borderLeft: `6px solid ${atrasado ? '#e74c3c' : '#2ecc71'}`,
-        boxShadow: '0 6px 12px rgba(0,0,0,0.12)',
-        height: '100%',
+        background: 'linear-gradient(180deg, #ffffff, #f9fafb)',
+        padding: 18,
+        borderRadius: 18,
+        borderLeft: `6px solid ${color}`,
+        boxShadow: '0 10px 24px rgba(0,0,0,0.08)',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
-        transition: 'all 0.3s ease',
-        position: 'relative',
-        overflow: 'hidden',
+        gap: 10,
+        transition: 'transform .2s ease, box-shadow .2s ease',
       }}
     >
-      <div style={{ marginBottom: 12 }}>
-        <h2
-          style={{
-            fontSize: 20,
-            fontWeight: 700,
-            color: '#111827',
-            marginBottom: 4,
-          }}
-        >
-          #{service.id} - {service.titulo}
-        </h2>
+      <h2
+        style={{
+          fontSize: 26,
+          fontWeight: 700,
+          color: '#111827',
+        }}
+      >
+        #{service.id} - {service.titulo}
+      </h2>
 
-        <p style={{ fontSize: 14, color: '#374151' }}>
+      <div style={{ fontSize: 22, color: 'black' }}>
+        <div>
           <strong>Cliente:</strong> {service.cliente}
-        </p>
-
-        <p style={{ fontSize: 14, color: '#374151' }}>
+        </div>
+        <div>
           <strong>Responsável:</strong> {service.responsavel}
-        </p>
-
-        <p style={{ fontSize: 14, color: '#374151' }}>
+        </div>
+        <div>
           <strong>Status:</strong> {service.status}
-        </p>
+        </div>
       </div>
 
       <ProgressBar value={service.progresso} color={color} />
 
-      <p
+      <div
         style={{
-          marginTop: 8,
           fontSize: 14,
-          fontWeight: 500,
-          color: atrasado ? '#e74c3c' : '#111827',
+          fontWeight: 600,
+          color: atrasado ? '#ef4444' : '#111827',
         }}
       >
         {atrasado
           ? `Atrasado ${Math.abs(diasRestantes)} dias`
           : `Entrega em ${diasRestantes} dias`}
-      </p>
+      </div>
     </div>
   );
 }
