@@ -5,7 +5,6 @@ import * as api from '../api'; // Arquivo que centraliza chamadas à API
 interface ServicesContextType {
   services: Service[];
   addService: (service: Service) => Promise<void>;
-  updateServiceProgress: (id: number, newProgress: number) => Promise<void>;
   finalizeService: (id: number) => Promise<void>;
   deleteService: (id: number) => Promise<void>;
 }
@@ -30,11 +29,6 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
     setServices((prev) => [...prev, newService]);
   }
 
-  async function updateServiceProgress(id: number, newProgress: number) {
-    const updated = await api.updateService(id, { progresso: newProgress });
-    setServices((prev) => prev.map((s) => (s.id === Number(id) ? updated : s)));
-  }
-
   async function finalizeService(id: number) {
     try {
       const updated = await api.finalizeService(id);
@@ -52,13 +46,14 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function deleteService(id: number) {
-    const confirmDelete = window.confirm(
-      'Tem certeza que deseja apagar este serviço?',
-    );
-    if (!confirmDelete) return;
+    try {
+      const updated = await api.deleteService(id);
 
-    await api.deleteService(id);
-    setServices((prev) => prev.filter((s) => s.id !== Number(id)));
+      setServices((prev) => prev.filter((s) => s.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao excluir serviço');
+    }
   }
 
   return (
@@ -66,7 +61,6 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
       value={{
         services,
         addService,
-        updateServiceProgress,
         finalizeService,
         deleteService,
       }}

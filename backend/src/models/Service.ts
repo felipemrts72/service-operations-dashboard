@@ -35,9 +35,17 @@ const ServiceSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['Iniciado', 'Em andamento', 'Finalização', 'Finalizado'],
+      enum: [
+        'Iniciado',
+        'Em andamento',
+        'Finalização',
+        'Finalizado',
+        'Excluido',
+      ],
       default: 'Iniciado',
     },
+    finishedAt: { type: String },
+    deleteddAt: { type: String },
   },
   { timestamps: true },
 );

@@ -3,6 +3,7 @@ import HeaderBar from '../components/HeaderBar';
 import ServiceCard from '../components/ServiceCard';
 import { useServices } from '../context/ServicesContext';
 import { sectors, type Sector } from '../types/Sector';
+import type { Service } from '../types/Service';
 
 type Mode = 'auto' | 'manual';
 
@@ -19,6 +20,12 @@ function isAfterCutTime() {
   );
 }
 
+function shouldShowService(service: Service, hideFinalized: boolean) {
+  if (service.status === 'Excluido') return false;
+  if (hideFinalized && service.status === 'Finalizado') return false;
+  return true;
+}
+
 export default function TvDashboard() {
   const [mode, setMode] = useState<Mode>('auto');
   const [currentSectorIndex, setCurrentSectorIndex] = useState(0);
@@ -29,8 +36,8 @@ export default function TvDashboard() {
   const hideFinalized = isAfterCutTime();
 
   const timeFilteredServices = services
-    .filter((service) => !(hideFinalized && service.status === 'Finalizado'))
-    .sort((a, b) => a.diasRestantes - b.diasRestantes); // MENOR prazo primeiro
+    .filter((service) => shouldShowService(service, hideFinalized))
+    .sort((a, b) => a.diasRestantes - b.diasRestantes);
 
   /* 🔁 Modo automático: troca de setor a cada 30s */
   useEffect(() => {

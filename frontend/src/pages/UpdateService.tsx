@@ -3,30 +3,38 @@ import HeaderBar from '../components/HeaderBar';
 import { useServices } from '../context/ServicesContext';
 import type { Service } from '../types/Service';
 
+function getActiveServices(services: Service[]): Service[] {
+  return services.filter(
+    (service): service is Service => !!service && service.status !== 'Excluido',
+  );
+}
+
+function getDeletedServices(services: Service[]): Service[] {
+  return services.filter(
+    (service): service is Service => !!service && service.status === 'Excluido',
+  );
+}
+
+function sortServicesByStatusAndId(services: Service[]): Service[] {
+  return [...services].sort((a, b) => {
+    const aFinalizado = a.status === 'Finalizado';
+    const bFinalizado = b.status === 'Finalizado';
+
+    // Finalizados sempre por último
+    if (aFinalizado && !bFinalizado) return 1;
+    if (!aFinalizado && bFinalizado) return -1;
+
+    // Mesmo grupo → ordenar por id
+    return a.id - b.id;
+  });
+}
+
 export default function UpdateService() {
-  const { services, updateServiceProgress, finalizeService, deleteService } =
-    useServices();
+  const { services, finalizeService, deleteService } = useServices();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
-  const [newProgress, setNewProgress] = useState('');
 
-  async function handleUpdate() {
-    if (!selectedService) return;
-
-    const progress = Number(newProgress);
-    if (progress <= selectedService.progresso) {
-      alert('O progresso deve ser maior que o atual');
-      return;
-    }
-
-    try {
-      await updateServiceProgress(selectedService.id, progress);
-      alert('Progresso atualizado');
-      setNewProgress('');
-    } catch (err) {
-      console.error(err);
-      alert('Erro ao atualizar progresso.');
-    }
-  }
+  const activeServices = sortServicesByStatusAndId(getActiveServices(services));
+  const deletedServices = getDeletedServices(services);
 
   async function handleFinalize() {
     if (!selectedService) return;
@@ -64,37 +72,68 @@ export default function UpdateService() {
         {/* Lista de serviços */}
         <div style={{ flex: 1 }}>
           <h2>Serviços</h2>
-          {services
-            .filter((service): service is Service => !!service) // remove null/undefined
-            .map((service) => (
-              <div
-                key={service.id}
-                onClick={() => {
-                  setSelectedService(service);
-                  console.log(service);
-                }}
-                style={{
-                  padding: 12,
-                  marginBottom: 8,
-                  borderRadius: 8,
-                  cursor: 'pointer',
-                  background:
-                    selectedService?.id === service.id ? '#2563eb' : '#ffffff',
-                  color:
-                    selectedService?.id === service.id ? '#ffffff' : '#1f2933',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-                }}
-              >
-                <strong>#{service.id}</strong> — {service.cliente}
-                <div>Progresso: {service.progresso}%</div>
-                <div>Status: {service.status}</div>
-              </div>
-            ))}
+          {activeServices.map((service) => (
+            <div
+              key={service.id}
+              onClick={() => {
+                setSelectedService(service);
+              }}
+              style={{
+                padding: 12,
+                marginBottom: 8,
+                borderRadius: 8,
+                cursor: 'pointer',
+                background:
+                  selectedService?.id === service.id
+                    ? '#2563eb'
+                    : service?.status === 'Finalizado'
+                      ? '#4eba609d'
+                      : '#ffffffff',
+                color:
+                  selectedService?.id === service.id ? '#ffffff' : '#1f2933',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+              }}
+            >
+              <strong>#{service.id}</strong> — {service.cliente}
+              <div>Responsavel: {service.responsavel}</div>
+              <div>Progresso: {service.progresso}%</div>
+              <div>Status: {service.status}</div>
+            </div>
+          ))}
         </div>
 
+        {/* Serviços excluídos */}
+        <div style={{ flex: 1 }}>
+          <h2>Serviços Excluídos</h2>
+
+          {deletedServices.length === 0 && (
+            <p style={{ color: '#6b7280' }}>Nenhum serviço excluído</p>
+          )}
+
+          {deletedServices.map((service) => (
+            <div
+              key={service.id}
+              style={{
+                padding: 12,
+                marginBottom: 8,
+                borderRadius: 8,
+                background: '#fef2f2',
+                color: '#7f1d1d',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
+              }}
+            >
+              <strong>#{service.id}</strong> — {service.cliente}
+              <div>Progresso: {service.progresso}%</div>
+              <div>Status: {service.status}</div>
+            </div>
+          ))}
+        </div>
         {/* Painel de edição */}
-        {selectedService && (
+        {selectedService && selectedService.status !== 'Excluido' && (
           <div
+            onClick={() => {
+              setSelectedService(null);
+            }}
             style={{
               flex: 1,
               background: '#ffffff',
@@ -116,37 +155,6 @@ export default function UpdateService() {
 
             {selectedService.status !== 'Finalizado' && (
               <>
-                <input
-                  type="number"
-                  placeholder="Novo progresso (%)"
-                  value={newProgress}
-                  onChange={(e) => setNewProgress(e.target.value)}
-                  style={{
-                    marginTop: 12,
-                    color: 'black',
-                    padding: '8px',
-                    borderRadius: 8,
-                    cursor: 'pointer',
-                    fontWeight: 700,
-                    marginRight: 5,
-                  }}
-                />
-                <button
-                  onClick={handleUpdate}
-                  style={{
-                    marginTop: 12,
-                    background: '#251d7fff',
-                    color: '#ffffff',
-                    padding: '10px',
-                    borderRadius: 8,
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontWeight: 700,
-                    marginRight: 5,
-                  }}
-                >
-                  Atualizar progresso
-                </button>
                 <button
                   onClick={handleFinalize}
                   style={{

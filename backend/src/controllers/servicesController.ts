@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-import { Service } from "../models/Service";
+import { Request, Response } from 'express';
+import { Service } from '../models/Service';
 
 // Listar todos
 export async function getServices(req: Request, res: Response) {
@@ -9,7 +9,7 @@ export async function getServices(req: Request, res: Response) {
 
 // Adicionar
 export async function addService(req: Request, res: Response) {
-console.log("req.body: ", req.body)
+  console.log('req.body: ', req.body);
 
   const newService = new Service(req.body);
   await newService.save();
@@ -18,27 +18,21 @@ console.log("req.body: ", req.body)
 
 // Atualizar progresso/dias
 export async function updateService(req: Request, res: Response) {
-  const serviceId = Number(req.params.id)
+  const serviceId = Number(req.params.id);
 
-  if (Number.isNaN(serviceId )) {
-    return res.status(400).json({message:"ID Invalido"})
+  if (Number.isNaN(serviceId)) {
+    return res.status(400).json({ message: 'ID Invalido' });
   }
 
   const { progresso, ...rest } = req.body;
 
   const service = await Service.findOne({ id: serviceId });
-  
-  if (!service) return res.status(404).json({ message: "Serviço não encontrado" });
+
+  if (!service)
+    return res.status(404).json({ message: 'Serviço não encontrado' });
 
   if (progresso !== undefined) {
     service.progresso = progresso;
-
-    // Atualiza o status automaticamente
-    if (progresso >= 100) {
-      service.status = "Finalizado";
-    } else if (progresso > 0) {
-      service.status = "Em andamento"; // padronizar com frontend
-    }
   }
 
   Object.assign(service, rest);
@@ -49,20 +43,27 @@ export async function updateService(req: Request, res: Response) {
 
 // Finalizar serviço
 export async function finalizeService(req: Request, res: Response) {
-
   const service = await Service.findOneAndUpdate(
     { id: req.params.id },
-    { progresso: 100, status: "Finalizado" },
-    { new: true } // <--- importante: retorna o serviço atualizado
+    { status: 'Finalizado', finishedAt: new Date() },
+    { new: true }, // <--- importante: retorna o serviço atualizado
   );
 
-  if (!service) return res.status(404).json({ message: "Serviço não encontrado" });
+  if (!service)
+    return res.status(404).json({ message: 'Serviço não encontrado' });
   res.json(service);
 }
 // Deletar
 export async function deleteService(req: Request, res: Response) {
-  await Service.findOneAndDelete({ id: req.params.id });
-  res.json({ message: "Serviço deletado" });
+  const service = await Service.findOneAndUpdate(
+    { id: req.params.id },
+    { status: 'Excluido', deletedAt: new Date() },
+    { new: true }, // <--- importante: retorna o serviço atualizado
+  );
+
+  if (!service)
+    return res.status(404).json({ message: 'Serviço não encontrado' });
+  res.json(service);
+  // await Service.findOneAndDelete({ id: req.params.id });
+  // res.json({ message: "Serviço deletado" });
 }
-
-

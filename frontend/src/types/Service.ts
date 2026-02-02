@@ -8,5 +8,12 @@ export type Service = {
   sector: Sector; // sempre um dos setores válidos
   diasRestantes: string;
   progresso: number; // 0 a 100
-  status: 'Iniciado' | 'Em andamento' | 'Finalização' | 'Finalizado';
+  finishedAt: string;
+  deleteddAt: string;
+  status:
+    | 'Iniciado'
+    | 'Em andamento'
+    | 'Finalização'
+    | 'Finalizado'
+    | 'Excluido';
 };

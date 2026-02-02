@@ -35,6 +35,6 @@ export async function finalizeService(id: number): Promise<Service> {
 }
 
 export async function deleteService(id: number): Promise<{ message: string }> {
-  const res = await fetch(`${BASE_URL}/${id}`, { method: 'DELETE' });
+  const res = await fetch(`${BASE_URL}/delete/${id}`, { method: 'PUT' });
   return res.json();
 }
