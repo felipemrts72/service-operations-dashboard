@@ -45,7 +45,7 @@ const ServiceSchema = new mongoose.Schema(
       default: 'Iniciado',
     },
     finishedAt: { type: String },
-    deleteddAt: { type: String },
+    deletedAt: { type: String },
   },
   { timestamps: true },
 );

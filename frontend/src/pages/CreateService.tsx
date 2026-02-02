@@ -38,6 +38,8 @@ export default function CreateService() {
       diasRestantes: form.diasRestantes,
       progresso: 0,
       status: 'Iniciado',
+      finishedAt: Date.now().toString(),
+      deletedAt: Date.now().toString(),
     };
 
     try {

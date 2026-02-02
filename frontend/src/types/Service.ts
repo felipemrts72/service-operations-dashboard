@@ -9,7 +9,7 @@ export type Service = {
   diasRestantes: string;
   progresso: number; // 0 a 100
   finishedAt: string;
-  deleteddAt: string;
+  deletedAt: string;
   status:
     | 'Iniciado'
     | 'Em andamento'

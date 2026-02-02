@@ -37,7 +37,11 @@ export default function TvDashboard() {
 
   const timeFilteredServices = services
     .filter((service) => shouldShowService(service, hideFinalized))
-    .sort((a, b) => a.diasRestantes - b.diasRestantes);
+    .sort((a, b) => {
+      const dateA = new Date(a.diasRestantes);
+      const dateB = new Date(b.diasRestantes);
+      return dateA.getTime() - dateB.getTime();
+    });
 
   /* 🔁 Modo automático: troca de setor a cada 30s */
   useEffect(() => {
