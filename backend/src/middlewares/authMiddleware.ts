@@ -17,7 +17,6 @@ export function authMiddleware(
     return res.status(401).json({ message: 'Token não fornecido' });
   }
 
-  // formato esperado: Bearer TOKEN
   const [, token] = authHeader.split(' ');
 
   if (!token) {
@@ -30,11 +29,12 @@ export function authMiddleware(
       process.env.JWT_SECRET as string,
     ) as JwtPayload;
 
-    // anexa o userId na request
-    req.userId = decoded.userId;
-    req.userRole = decoded.role;
+    req.user = {
+      id: decoded.userId,
+      role: decoded.role,
+    };
 
-    return next();
+    next();
   } catch {
     return res.status(401).json({ message: 'Token inválido' });
   }

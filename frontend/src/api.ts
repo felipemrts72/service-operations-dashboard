@@ -2,16 +2,26 @@ import type { Service } from './types/Service';
 
 const BASE_URL = 'http://localhost:5000/api/services';
 
-export async function getServices(): Promise<Service[]> {
-  const res = await fetch(BASE_URL);
-  const json = await res.json();
-  return json;
+function authHeaders() {
+  const token = localStorage.getItem('token');
+
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
 }
 
-export async function addService(service: Service): Promise<Service> {
+export async function getServices() {
+  const res = await fetch(BASE_URL, {
+    headers: authHeaders(),
+  });
+  return res.json();
+}
+
+export async function addService(service: Service) {
   const res = await fetch(BASE_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(),
     body: JSON.stringify(service),
   });
   return res.json();
@@ -23,18 +33,24 @@ export async function updateService(
 ): Promise<Service> {
   const res = await fetch(`${BASE_URL}/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: authHeaders(),
     body: JSON.stringify(data),
   });
   return res.json();
 }
 
 export async function finalizeService(id: number): Promise<Service> {
-  const res = await fetch(`${BASE_URL}/finalize/${id}`, { method: 'PUT' });
+  const res = await fetch(`${BASE_URL}/finalize/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+  });
   return res.json();
 }
 
 export async function deleteService(id: number): Promise<{ message: string }> {
-  const res = await fetch(`${BASE_URL}/delete/${id}`, { method: 'PUT' });
+  const res = await fetch(`${BASE_URL}/delete/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+  });
   return res.json();
 }

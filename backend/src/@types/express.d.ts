@@ -3,8 +3,10 @@ import 'express';
 declare global {
   namespace Express {
     interface Request {
-      userId?: string;
-      userRole?: 'admin' | 'viewer';
+      user?: {
+        id: string;
+        role: 'admin' | 'viewer';
+      };
     }
   }
 }

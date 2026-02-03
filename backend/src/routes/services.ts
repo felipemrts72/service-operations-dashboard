@@ -7,16 +7,18 @@ import {
   finalizeService,
 } from '../controllers/servicesController';
 import { authMiddleware } from '../middlewares/authMiddleware';
+import { isAdmin } from '../middlewares/isAdmin';
+import { canViewServices } from '../middlewares/canViewServices';
 
 const router = Router();
 
-// todas protegidas
-router.use(authMiddleware);
+// visualizar (admin + viewer)
+router.get('/', authMiddleware, canViewServices, getServices);
 
-router.get('/', getServices);
-router.post('/', addService);
-router.put('/:id', updateService);
-router.put('/delete/:id', deleteService);
-router.put('/finalize/:id', finalizeService);
+// somente admin
+router.post('/', authMiddleware, isAdmin, addService);
+router.put('/:id', authMiddleware, isAdmin, updateService);
+router.put('/delete/:id', authMiddleware, isAdmin, deleteService);
+router.put('/finalize/:id', authMiddleware, isAdmin, finalizeService);
 
 export default router;

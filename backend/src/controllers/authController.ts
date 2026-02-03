@@ -5,7 +5,7 @@ import User from '../models/User';
 
 export async function register(req: Request, res: Response) {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
     // validações básicas (MVP)
     if (!email || !password) {
@@ -33,6 +33,7 @@ export async function register(req: Request, res: Response) {
     const user = await User.create({
       email,
       password: hashedPassword,
+      role,
     });
 
     // nunca retornar senha
