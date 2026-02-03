@@ -10,7 +10,9 @@
     "skipLibCheck": true, // ignora checagem de libs externas
     "noImplicitAny": true, // força tipagem
     "moduleResolution": "node",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+
+    "typeRoots": ["./src/@types", "./node_modules/@types"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

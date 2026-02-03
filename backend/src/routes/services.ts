@@ -6,8 +6,12 @@ import {
   deleteService,
   finalizeService,
 } from '../controllers/servicesController';
+import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router = Router();
+
+// todas protegidas
+router.use(authMiddleware);
 
 router.get('/', getServices);
 router.post('/', addService);
