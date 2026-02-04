@@ -19,11 +19,13 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "fs": "^0.0.1-security",
+    "fs-extra": "^11.3.3",
     "googleapis": "^171.2.0",
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^6.21.0",
     "mongoose": "^8.21.0",
     "node-cron": "^4.2.1",
+    "node-schedule": "^2.1.1",
     "path": "^0.12.7"
   },
   "devDependencies": {
