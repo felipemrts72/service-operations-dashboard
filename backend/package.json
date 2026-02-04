@@ -18,10 +18,13 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
+    "fs": "^0.0.1-security",
+    "googleapis": "^171.2.0",
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^6.21.0",
     "mongoose": "^8.21.0",
-    "node-cron": "^4.2.1"
+    "node-cron": "^4.2.1",
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
