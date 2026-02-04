@@ -7,77 +7,36 @@ import type { Service } from '../types/Service';
 
 type Mode = 'auto' | 'manual';
 
-function isAfterCutTime() {
-  const now = new Date();
-  const totalMinutes = now.getHours() * 60 + now.getMinutes();
-
-  const cutMorning = 11 * 60; // 11:00
-  const cutAfternoon = 17 * 60 + 45; // 17:45
-
-  return (
-    (totalMinutes >= cutMorning && totalMinutes < 13 * 60) ||
-    totalMinutes >= cutAfternoon
-  );
-}
-
-function shouldShowService(service: Service, hideFinalized: boolean) {
-  if (service.status === 'Excluido') return false;
-  if (hideFinalized && service.status === 'Finalizado') return false;
-  return true;
-}
-
 export default function TvDashboard() {
+  const { services, reloadServices } = useServices();
   const [mode, setMode] = useState<Mode>('auto');
   const [currentSectorIndex, setCurrentSectorIndex] = useState(0);
   const [selectedSectors, setSelectedSectors] = useState<Sector[]>([]);
-  const { services } = useServices();
 
-  /* ⏰ Regra de horário */
-  const hideFinalized = isAfterCutTime();
-
-  const timeFilteredServices = services
-    .filter((service) => shouldShowService(service, hideFinalized))
-    .sort((a, b) => {
-      const dateA = new Date(a.diasRestantes);
-      const dateB = new Date(b.diasRestantes);
-      return dateA.getTime() - dateB.getTime();
-    });
-
-  /* 🔁 Modo automático: troca de setor a cada 30s */
+  /* 🔁 Modo automático: troca de setor a cada 20s */
   useEffect(() => {
     if (mode !== 'auto') return;
 
     const interval = setInterval(() => {
       setCurrentSectorIndex((prev) => (prev + 1) % sectors.length);
-    }, 30000);
+    }, 20000);
 
     return () => clearInterval(interval);
   }, [mode]);
 
-  /* 🔄 Atualiza lista de serviços a cada 10s */
+  /* 🔄 Atualiza a lista de serviços do backend a cada 10s */
   useEffect(() => {
     const interval = setInterval(() => {
-      // Força atualização do componente
-      setCurrentSectorIndex((prev) => prev); // dispara re-render
-    }, 10000); // 10 segundos
+      reloadServices();
+    }, 10000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [reloadServices]);
 
   const sectorToShow = mode === 'auto' ? sectors[currentSectorIndex] : null;
 
-  const filteredServices =
-    mode === 'auto'
-      ? timeFilteredServices.filter(
-          (service) => service.sector === sectorToShow,
-        )
-      : timeFilteredServices.filter((service) =>
-          selectedSectors.includes(service.sector),
-        );
-
   function toggleSector(sector: Sector) {
     setMode('manual');
-
     setSelectedSectors((prev) =>
       prev.includes(sector)
         ? prev.filter((s) => s !== sector)
@@ -90,10 +49,29 @@ export default function TvDashboard() {
     setSelectedSectors([]);
     setCurrentSectorIndex(0);
   }
+  const visibleServices = services.filter(
+    (s) => s.status !== 'Excluido' && s.status !== 'Finalizado',
+  );
+
+  /* Agrupa serviços por setor */
+  const servicesBySector: Record<string, Service[]> = {};
+  sectors.forEach((s) => (servicesBySector[s] = []));
+  visibleServices.forEach((s) => {
+    servicesBySector[s.sector]?.push(s);
+  });
+
+  /* Ordena por data mais próxima */
+  Object.values(servicesBySector).forEach((list) =>
+    list.sort(
+      (a, b) =>
+        new Date(a.diasRestantes).getTime() -
+        new Date(b.diasRestantes).getTime(),
+    ),
+  );
 
   return (
     <div style={{ minHeight: '100vh', background: '#f4f6f8' }}>
-      <HeaderBar title="Calendário de Serviços" />
+      <HeaderBar title="TV de Serviços" />
 
       {/* Painel de controle */}
       <div
@@ -148,31 +126,40 @@ export default function TvDashboard() {
         )}
       </div>
 
-      {mode === 'auto' && sectorToShow && (
-        <h1
-          style={{
-            textAlign: 'center',
-            margin: '16px 0',
-            fontSize: 32,
-            fontWeight: 700,
-            color: '#1f2933',
-          }}
-        >
-          SETOR: {sectorToShow.toUpperCase()}
-        </h1>
-      )}
+      <main style={{ padding: 32 }}>
+        {(mode === 'auto' && sectorToShow
+          ? [sectorToShow]
+          : selectedSectors
+        ).map((sector) => {
+          const list = servicesBySector[sector];
+          if (!list || list.length === 0) return null;
 
-      <main
-        style={{
-          padding: 24,
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(460px, 1fr))',
-          gap: 16,
-        }}
-      >
-        {filteredServices.map((service) => (
-          <ServiceCard key={service.id} service={service} />
-        ))}
+          return (
+            <section key={sector} style={{ marginBottom: 48 }}>
+              <h1
+                style={{
+                  fontSize: 36,
+                  fontWeight: 800,
+                  marginBottom: 24,
+                }}
+              >
+                SETOR: {sector.toUpperCase()}
+              </h1>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(460px, 1fr))',
+                  gap: 20,
+                }}
+              >
+                {list.map((service) => (
+                  <ServiceCard key={service.id} service={service} />
+                ))}
+              </div>
+            </section>
+          );
+        })}
       </main>
     </div>
   );

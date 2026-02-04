@@ -3,42 +3,28 @@ import HeaderBar from '../components/HeaderBar';
 import { useServices } from '../context/ServicesContext';
 import type { Service } from '../types/Service';
 
-function getActiveServices(services: Service[]): Service[] {
-  return services.filter(
-    (service): service is Service => !!service && service.status !== 'Excluido',
-  );
-}
-
-function getDeletedServices(services: Service[]): Service[] {
-  return services.filter(
-    (service): service is Service => !!service && service.status === 'Excluido',
-  );
-}
-
-function sortServicesByStatusAndId(services: Service[]): Service[] {
-  return [...services].sort((a, b) => {
-    const aFinalizado = a.status === 'Finalizado';
-    const bFinalizado = b.status === 'Finalizado';
-
-    // Finalizados sempre por último
-    if (aFinalizado && !bFinalizado) return 1;
-    if (!aFinalizado && bFinalizado) return -1;
-
-    // Mesmo grupo → ordenar por id
-    return a.id - b.id;
-  });
-}
-
 export default function UpdateService() {
   const { services, finalizeService, deleteService } = useServices();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
 
-  const activeServices = sortServicesByStatusAndId(getActiveServices(services));
-  const deletedServices = getDeletedServices(services);
+  // Filtra serviços ativos (status diferente de "Excluido")
+  const activeServices = services
+    .filter((s) => s.status !== 'Excluido')
+    .sort((a, b) => {
+      const aFinalizado = a.status === 'Finalizado';
+      const bFinalizado = b.status === 'Finalizado';
+      if (aFinalizado && !bFinalizado) return 1;
+      if (!aFinalizado && bFinalizado) return -1;
+      return a.id - b.id;
+    });
+
+  // Filtra serviços excluídos (apenas status === "Excluido")
+  const deletedServices = services
+    .filter((s) => s.status === 'Excluido')
+    .sort((a, b) => a.id - b.id);
 
   async function handleFinalize() {
     if (!selectedService) return;
-
     try {
       await finalizeService(selectedService.id);
       alert('Serviço finalizado');
@@ -51,7 +37,6 @@ export default function UpdateService() {
 
   async function handleDelete() {
     if (!selectedService) return;
-
     const ok = window.confirm('Tem certeza que deseja apagar este serviço?');
     if (!ok) return;
 
@@ -68,16 +53,24 @@ export default function UpdateService() {
     <div style={{ minHeight: '100vh', background: '#f4f6f8' }}>
       <HeaderBar title="Atualizar Serviços" />
 
-      <main style={{ padding: 24, display: 'flex', gap: 24 }}>
-        {/* Lista de serviços */}
-        <div style={{ flex: 1 }}>
-          <h2>Serviços</h2>
+      <main
+        style={{
+          padding: 24,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 32,
+        }}
+      >
+        {/* Serviços ativos */}
+        <section>
+          <h2>Serviços Ativos</h2>
+          {activeServices.length === 0 && (
+            <p style={{ color: '#6b7280' }}>Nenhum serviço ativo</p>
+          )}
           {activeServices.map((service) => (
             <div
               key={service.id}
-              onClick={() => {
-                setSelectedService(service);
-              }}
+              onClick={() => setSelectedService(service)}
               style={{
                 padding: 12,
                 marginBottom: 8,
@@ -86,30 +79,28 @@ export default function UpdateService() {
                 background:
                   selectedService?.id === service.id
                     ? '#2563eb'
-                    : service?.status === 'Finalizado'
+                    : service.status === 'Finalizado'
                       ? '#4eba609d'
-                      : '#ffffffff',
+                      : '#ffffff',
                 color:
                   selectedService?.id === service.id ? '#ffffff' : '#1f2933',
                 boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
               }}
             >
               <strong>#{service.id}</strong> — {service.cliente}
-              <div>Responsavel: {service.responsavel}</div>
+              <div>Responsável: {service.responsavel}</div>
               <div>Progresso: {service.progresso}%</div>
               <div>Status: {service.status}</div>
             </div>
           ))}
-        </div>
+        </section>
 
         {/* Serviços excluídos */}
-        <div style={{ flex: 1 }}>
-          <h2>Serviços Excluídos</h2>
-
+        <section>
+          <h2>Serviços Excluídos (Auditoria)</h2>
           {deletedServices.length === 0 && (
             <p style={{ color: '#6b7280' }}>Nenhum serviço excluído</p>
           )}
-
           {deletedServices.map((service) => (
             <div
               key={service.id}
@@ -127,19 +118,35 @@ export default function UpdateService() {
               <div>Status: {service.status}</div>
             </div>
           ))}
-        </div>
-        {/* Painel de edição */}
-        {selectedService && selectedService.status !== 'Excluido' && (
+        </section>
+      </main>
+
+      {/* Modal de edição */}
+      {selectedService && selectedService.status !== 'Excluido' && (
+        <div
+          onClick={() => setSelectedService(null)} // fechar modal clicando no fundo
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+        >
           <div
-            onClick={() => {
-              setSelectedService(null);
-            }}
+            onClick={(e) => e.stopPropagation()} // evita fechar ao clicar no modal
             style={{
-              flex: 1,
               background: '#ffffff',
-              padding: 16,
+              padding: 24,
               borderRadius: 12,
-              boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+              width: '400px',
+              maxWidth: '90%',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
             }}
           >
             <h3>Editar Serviço #{selectedService.id}</h3>
@@ -154,11 +161,11 @@ export default function UpdateService() {
             </p>
 
             {selectedService.status !== 'Finalizado' && (
-              <>
+              <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
                 <button
                   onClick={handleFinalize}
                   style={{
-                    marginTop: 12,
+                    flex: 1,
                     background: '#e74c3c',
                     color: '#ffffff',
                     padding: '10px',
@@ -166,7 +173,6 @@ export default function UpdateService() {
                     border: 'none',
                     cursor: 'pointer',
                     fontWeight: 700,
-                    marginRight: 5,
                   }}
                 >
                   Finalizar serviço
@@ -174,7 +180,7 @@ export default function UpdateService() {
                 <button
                   onClick={handleDelete}
                   style={{
-                    marginTop: 12,
+                    flex: 1,
                     background: '#7f1d1d',
                     color: '#ffffff',
                     padding: '10px',
@@ -186,11 +192,11 @@ export default function UpdateService() {
                 >
                   Apagar serviço
                 </button>
-              </>
+              </div>
             )}
           </div>
-        )}
-      </main>
+        </div>
+      )}
     </div>
   );
 }

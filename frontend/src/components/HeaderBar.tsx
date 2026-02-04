@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { logout } from '../auth/auth';
 
 interface Props {
   title: string;
@@ -6,6 +8,8 @@ interface Props {
 
 export default function HeaderBar({ title }: Props) {
   const [dateTime, setDateTime] = useState(new Date());
+  const navigate = useNavigate();
+  const role = localStorage.getItem('role');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -18,46 +22,114 @@ export default function HeaderBar({ title }: Props) {
   return (
     <header
       style={{
-        height: 72,
-        background: "#1f2933",
-        color: "#ffffff",
-        display: "flex",
-        alignItems: "center",
-        padding: "0 24px",
-        position: "relative",
-        borderBottom: "2px solid #111827"
+        height: 90,
+        background: '#111827',
+        color: '#ffffff',
+        display: 'grid',
+        gridTemplateColumns: '1fr 2fr 1fr',
+        alignItems: 'center',
+        padding: '0 32px',
+        borderBottom: '3px solid #1f2933',
       }}
     >
-      {/* Esquerda */}
-      <div style={{ fontSize: 20, fontWeight: 600 }}>
-        Torneadora Universal
+      {/* ESQUERDA — LOGO + NOME */}
+      <div
+        onClick={() => navigate('/tv')}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 16,
+          cursor: 'pointer',
+        }}
+      >
+        <img
+          src="/src/images/logo.png"
+          alt="Logo Torneadora Universal"
+          style={{
+            height: 48,
+            objectFit: 'contain',
+          }}
+        />
+
+        <span style={{ fontSize: 18, fontWeight: 600 }}>
+          Torneadora Universal
+        </span>
       </div>
 
-      {/* Centro */}
+      {/* CENTRO — TÍTULO */}
       <div
         style={{
-          position: "absolute",
-          left: "50%",
-          transform: "translateX(-50%)",
-          fontSize: 24,
-          fontWeight: 700
+          textAlign: 'center',
+          fontSize: 36,
+          fontWeight: 800,
+          letterSpacing: 1,
+          textTransform: 'uppercase',
         }}
       >
         {title}
       </div>
 
-      {/* Direita */}
+      {/* DIREITA — AÇÕES */}
       <div
         style={{
-          marginLeft: "auto",
-          textAlign: "right",
-          fontSize: 18,
-          lineHeight: 1.2
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          gap: 14,
         }}
       >
-        <div>{dateTime.toLocaleDateString("pt-BR")}</div>
-        <div>{dateTime.toLocaleTimeString("pt-BR")}</div>
+        {role === 'admin' && (
+          <>
+            <button onClick={() => navigate('/create')} style={navButtonStyle}>
+              Criar Serviço
+            </button>
+
+            <button onClick={() => navigate('/update')} style={navButtonStyle}>
+              Atualizar Serviço
+            </button>
+          </>
+        )}
+
+        <div
+          style={{
+            textAlign: 'right',
+            fontSize: 14,
+            opacity: 0.85,
+            marginLeft: 12,
+          }}
+        >
+          <div>{dateTime.toLocaleDateString('pt-BR')}</div>
+          <div>{dateTime.toLocaleTimeString('pt-BR')}</div>
+        </div>
+
+        <button
+          onClick={() => {
+            logout();
+            navigate('/login');
+          }}
+          style={{
+            padding: '6px 10px',
+            background: '#dc2626',
+            border: 'none',
+            borderRadius: 6,
+            color: '#fff',
+            cursor: 'pointer',
+            fontWeight: 600,
+          }}
+        >
+          Sair
+        </button>
       </div>
     </header>
   );
 }
+
+const navButtonStyle: React.CSSProperties = {
+  padding: '6px 12px',
+  background: '#1f2933',
+  border: '1px solid #374151',
+  borderRadius: 6,
+  color: '#ffffff',
+  cursor: 'pointer',
+  fontWeight: 600,
+};

@@ -1,9 +1,10 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { Service } from '../types/Service';
-import * as api from '../api'; // Arquivo que centraliza chamadas à API
+import * as api from '../api';
 
 interface ServicesContextType {
   services: Service[];
+  reloadServices: () => Promise<void>;
   addService: (service: Service) => Promise<void>;
   finalizeService: (id: number) => Promise<void>;
   deleteService: (id: number) => Promise<void>;
@@ -14,14 +15,14 @@ const ServicesContext = createContext<ServicesContextType | null>(null);
 export function ServicesProvider({ children }: { children: React.ReactNode }) {
   const [services, setServices] = useState<Service[]>([]);
 
-  // Carregar serviços do backend ao iniciar
-  useEffect(() => {
-    async function loadServices() {
-      const data = await api.getServices();
+  async function reloadServices() {
+    const data = await api.getServices();
+    setServices(data);
+  }
 
-      setServices(data);
-    }
-    loadServices();
+  // inicial
+  useEffect(() => {
+    reloadServices();
   }, []);
 
   async function addService(service: Service) {
@@ -30,36 +31,29 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function finalizeService(id: number) {
-    try {
-      const updated = await api.finalizeService(id);
-      if (!updated) {
-        alert('Erro: serviço não encontrado');
-        return;
-      }
-      setServices((prev) =>
-        prev.map((s) => (s.id === Number(id) ? updated : s)),
-      );
-    } catch (err) {
-      console.error(err);
-      alert('Erro ao finalizar serviço');
-    }
+    const updated = await api.finalizeService(id);
+    setServices((prev) => prev.map((s) => (s.id === Number(id) ? updated : s)));
   }
 
   async function deleteService(id: number) {
-    try {
-      const updated = await api.deleteService(id);
+    // Chama backend
+    await api.deleteService(id);
 
-      setServices((prev) => prev.filter((s) => s.id !== id));
-    } catch (err) {
-      console.error(err);
-      alert('Erro ao excluir serviço');
-    }
+    // Atualiza localmente para status 'Excluido' e deletedAt
+    setServices((prev) =>
+      prev.map((s) =>
+        s.id === id
+          ? { ...s, status: 'Excluido', deletedAt: Date.now().toString() }
+          : s,
+      ),
+    );
   }
 
   return (
     <ServicesContext.Provider
       value={{
         services,
+        reloadServices,
         addService,
         finalizeService,
         deleteService,
@@ -73,6 +67,6 @@ export function ServicesProvider({ children }: { children: React.ReactNode }) {
 export function useServices() {
   const context = useContext(ServicesContext);
   if (!context)
-    throw new Error('useServices must be used within ServicesProvider');
+    throw new Error('useServices tem de ser usado com ServicesProvider');
   return context;
 }
