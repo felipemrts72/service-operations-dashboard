@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import TvDashboard from './pages/TvDashboard';
-import CreateService from './pages/CreateService';
+import CreateService from './pages/CreateService/CreateService';
 import UpdateService from './pages/UpdateService';
 import Login from './pages/Login';
 import ProtectedRoute from './auth/ProtectedRoute';

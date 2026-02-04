@@ -1,8 +1,9 @@
+import './CreateService.css';
 import { useState } from 'react';
-import HeaderBar from '../components/HeaderBar';
-import { sectors, type Sector } from '../types/Sector';
-import type { Service } from '../types/Service';
-import { useServices } from '../context/ServicesContext';
+import HeaderBar from '../../components/HeaderBar';
+import { sectors, type Sector } from '../../types/Sector';
+import type { Service } from '../../types/Service';
+import { useServices } from '../../context/ServicesContext';
 
 export default function CreateService() {
   const [form, setForm] = useState({
@@ -53,31 +54,13 @@ export default function CreateService() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f4f6f8' }}>
+    <div className="create-service">
       <HeaderBar title="Lançar Serviço" />
 
-      <main
-        style={{
-          padding: 24,
-          display: 'flex',
-          justifyContent: 'center',
-        }}
-      >
-        <form
-          onSubmit={handleSubmit}
-          style={{
-            width: '100%',
-            maxWidth: 700,
-            background: '#ffffff',
-            padding: 24,
-            borderRadius: 12,
-            boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 16,
-          }}
-        >
+      <main className="create-service__main">
+        <form onSubmit={handleSubmit} className="create-service__form">
           <input
+            className="create-service__input"
             name="id"
             placeholder="Número do serviço"
             value={form.id}
@@ -86,6 +69,7 @@ export default function CreateService() {
           />
 
           <input
+            className="create-service__input"
             name="titulo"
             placeholder="Item/serviço à fazer"
             value={form.titulo}
@@ -94,6 +78,7 @@ export default function CreateService() {
           />
 
           <input
+            className="create-service__input"
             name="cliente"
             placeholder="Cliente"
             value={form.cliente}
@@ -102,6 +87,7 @@ export default function CreateService() {
           />
 
           <input
+            className="create-service__input"
             name="responsavel"
             placeholder="Responsável"
             value={form.responsavel}
@@ -109,7 +95,12 @@ export default function CreateService() {
             required
           />
 
-          <select name="sector" value={form.sector} onChange={handleChange}>
+          <select
+            name="sector"
+            value={form.sector}
+            onChange={handleChange}
+            className="create-service__select"
+          >
             {sectors.map((sector) => (
               <option key={sector} value={sector}>
                 {sector}
@@ -123,22 +114,10 @@ export default function CreateService() {
             placeholder="Prazo (dias)"
             value={form.diasRestantes}
             onChange={handleChange}
+            className="create-service__input"
           />
 
-          <button
-            type="submit"
-            style={{
-              gridColumn: '1 / -1',
-              padding: '12px 0',
-              fontSize: 16,
-              fontWeight: 700,
-              background: '#2563eb',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: 8,
-              cursor: 'pointer',
-            }}
-          >
+          <button type="submit" className="create-service__button">
             Lançar serviço
           </button>
         </form>
