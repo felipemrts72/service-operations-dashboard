@@ -1,6 +1,7 @@
 import type { Service } from './types/Service';
 
-const BASE_URL = 'https://service-operations-dashboard.onrender.com/services';
+const BASE_URL =
+  'https://service-operations-dashboard.onrender.com/api/services';
 
 function authHeaders() {
   const token = localStorage.getItem('token');
