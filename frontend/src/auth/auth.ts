@@ -1,4 +1,4 @@
-const AUTH_URL = 'http://localhost:5000/auth';
+const AUTH_URL = 'https://service-operations-dashboard.onrender.com/auth';
 
 export async function login(email: string, password: string) {
   const res = await fetch(`${AUTH_URL}/login`, {

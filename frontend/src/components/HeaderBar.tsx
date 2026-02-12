@@ -43,7 +43,7 @@ export default function HeaderBar({ title }: Props) {
         }}
       >
         <img
-          src="/src/images/logo.png"
+          src="/logo.png"
           alt="Logo Torneadora Universal"
           style={{
             height: 48,

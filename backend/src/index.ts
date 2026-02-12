@@ -6,9 +6,8 @@ import servicesRouter from './routes/services';
 import { setupBackup } from './utils/backup';
 import authRoutes from './routes/auth';
 
-setupBackup();
-
 dotenv.config();
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -25,3 +24,5 @@ mongoose
     app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
   })
   .catch((err) => console.error('Erro ao conectar MongoDB:', err));
+
+setupBackup();
