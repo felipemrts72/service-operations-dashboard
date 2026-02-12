@@ -1,4 +1,6 @@
-const AUTH_URL = 'https://service-operations-dashboard.onrender.com/auth';
+const API_BASE = import.meta.env.VITE_API_URL;
+
+export const AUTH_URL = `${API_BASE}/auth`;
 
 export async function login(email: string, password: string) {
   const res = await fetch(`${AUTH_URL}/login`, {

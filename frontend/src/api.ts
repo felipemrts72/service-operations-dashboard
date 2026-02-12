@@ -1,6 +1,7 @@
 import type { Service, CreateServiceDTO } from './types/Service';
+const API_BASE = import.meta.env.VITE_API_URL;
 
-const BASE_URL = `${import.meta.env.VITE_API_URL}/services`;
+const BASE_URL = `${API_BASE}/api/services`;
 
 function authHeaders() {
   const token = localStorage.getItem('token');

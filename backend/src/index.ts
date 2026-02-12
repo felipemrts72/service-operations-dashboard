@@ -9,7 +9,25 @@ import authRoutes from './routes/auth';
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+
+      if (
+        origin.includes('vercel.app') ||
+        origin.includes('torneadorauniversal.com.br') ||
+        origin.includes('localhost')
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
 
 app.use('/api/services', servicesRouter);
