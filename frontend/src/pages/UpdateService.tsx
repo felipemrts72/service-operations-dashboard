@@ -26,7 +26,7 @@ export default function UpdateService() {
   async function handleFinalize() {
     if (!selectedService) return;
     try {
-      await finalizeService(selectedService.id);
+      await finalizeService(selectedService._id);
       alert('Serviço finalizado');
       setSelectedService(null);
     } catch (err) {
@@ -41,7 +41,7 @@ export default function UpdateService() {
     if (!ok) return;
 
     try {
-      await deleteService(selectedService.id);
+      await deleteService(selectedService._id);
       setSelectedService(null);
     } catch (err) {
       console.error(err);
@@ -69,7 +69,7 @@ export default function UpdateService() {
           )}
           {activeServices.map((service) => (
             <div
-              key={service.id}
+              key={service._id}
               onClick={() => setSelectedService(service)}
               style={{
                 padding: 12,
@@ -77,7 +77,7 @@ export default function UpdateService() {
                 borderRadius: 8,
                 cursor: 'pointer',
                 background:
-                  selectedService?.id === service.id
+                  selectedService?._id === service._id
                     ? '#2563eb'
                     : service.status === 'Finalizado'
                       ? '#4eba609d'
@@ -103,7 +103,7 @@ export default function UpdateService() {
           )}
           {deletedServices.map((service) => (
             <div
-              key={service.id}
+              key={service._id}
               style={{
                 padding: 12,
                 marginBottom: 8,

@@ -2,7 +2,7 @@ import './CreateService.css';
 import { useState } from 'react';
 import HeaderBar from '../../components/HeaderBar';
 import { sectors, type Sector } from '../../types/Sector';
-import type { Service } from '../../types/Service';
+import type { CreateServiceDTO } from '../../types/Service';
 import { useServices } from '../../context/ServicesContext';
 
 export default function CreateService() {
@@ -30,7 +30,7 @@ export default function CreateService() {
     console.log('antes de mandar: ', form.diasRestantes);
     console.log('Form Completo: ', form);
 
-    const newService: Service = {
+    const newService: CreateServiceDTO = {
       id: Number(form.id),
       titulo: form.titulo,
       cliente: form.cliente,

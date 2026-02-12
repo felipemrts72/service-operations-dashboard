@@ -1,19 +1,16 @@
-import type { Sector } from './Sector';
-
-export type Service = {
+export interface Service {
+  _id: string;
   id: number;
   titulo: string;
   cliente: string;
   responsavel: string;
-  sector: Sector; // sempre um dos setores válidos
+  sector: string;
   diasRestantes: string;
-  progresso: number; // 0 a 100
-  finishedAt: string;
-  deletedAt: string;
-  status:
-    | 'Iniciado'
-    | 'Em andamento'
-    | 'Finalização'
-    | 'Finalizado'
-    | 'Excluido';
-};
+  progresso: number;
+  status: string;
+  finishedAt?: string;
+  deletedAt?: string;
+}
+
+/* 👇 CRIE ISSO AQUI */
+export type CreateServiceDTO = Omit<Service, '_id'>;

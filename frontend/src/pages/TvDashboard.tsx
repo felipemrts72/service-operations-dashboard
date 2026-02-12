@@ -154,7 +154,7 @@ export default function TvDashboard() {
                 }}
               >
                 {list.map((service) => (
-                  <ServiceCard key={service.id} service={service} />
+                  <ServiceCard key={service._id} service={service} />
                 ))}
               </div>
             </section>

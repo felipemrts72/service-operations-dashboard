@@ -1,7 +1,6 @@
-import type { Service } from './types/Service';
+import type { Service, CreateServiceDTO } from './types/Service';
 
-const BASE_URL =
-  'https://service-operations-dashboard.onrender.com/api/services';
+const BASE_URL = `${import.meta.env.VITE_API_URL}/services`;
 
 function authHeaders() {
   const token = localStorage.getItem('token');
@@ -12,46 +11,51 @@ function authHeaders() {
   };
 }
 
-export async function getServices() {
+export async function getServices(): Promise<Service[]> {
   const res = await fetch(BASE_URL, {
     headers: authHeaders(),
   });
+
   return res.json();
 }
 
-export async function addService(service: Service) {
+export async function addService(service: CreateServiceDTO): Promise<Service> {
   const res = await fetch(BASE_URL, {
     method: 'POST',
     headers: authHeaders(),
     body: JSON.stringify(service),
   });
+
   return res.json();
 }
 
 export async function updateService(
-  id: number,
+  _id: string,
   data: Partial<Service>,
 ): Promise<Service> {
-  const res = await fetch(`${BASE_URL}/${id}`, {
+  const res = await fetch(`${BASE_URL}/${_id}`, {
     method: 'PUT',
     headers: authHeaders(),
     body: JSON.stringify(data),
   });
+
   return res.json();
 }
 
-export async function finalizeService(id: number): Promise<Service> {
-  const res = await fetch(`${BASE_URL}/finalize/${id}`, {
+export async function finalizeService(_id: string): Promise<Service> {
+  const res = await fetch(`${BASE_URL}/finalize/${_id}`, {
     method: 'PUT',
     headers: authHeaders(),
   });
+
   return res.json();
 }
 
-export async function deleteService(id: number): Promise<{ message: string }> {
-  const res = await fetch(`${BASE_URL}/delete/${id}`, {
+export async function deleteService(_id: string): Promise<Service> {
+  const res = await fetch(`${BASE_URL}/delete/${_id}`, {
     method: 'PUT',
     headers: authHeaders(),
   });
+
   return res.json();
 }
